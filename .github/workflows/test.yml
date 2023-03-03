@@ -19,6 +19,7 @@ jobs:
         s3-filename: [ 'test' ]
         deploy-group: [ 'develop' ]
     steps:
+      - uses: actions/checkout@v3
       # Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
