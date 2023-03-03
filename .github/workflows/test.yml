@@ -1,0 +1,39 @@
+
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: dev
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    name: CD part
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app-name: [ 'test_dep' ]
+        s3-bucket: [ 'tertertert-sorce' ]
+        s3-filename: [ 'test' ]
+        deploy-group: [ 'develop' ]
+    steps:
+      # Configure AWS credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+#       Deploy push to S3
+      - name: AWS Deploy push
+      # Creating deployment via CodeDeploy
+      - name: Creating AWS Deployment
+        run: |
+          aws deploy create-deployment \
+          --application-name ${{ matrix.app-name }} \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ matrix.deploy-group }} \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=${{ matrix.s3-bucket }},key=${{ matrix.s3-filename }}.zip,bundleType=zip \
