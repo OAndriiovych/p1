@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /opt/dev
+hooks:
+  ApplicationStart:
+    - location: ./build.sh
+      timeout: 300
+      runas: root
